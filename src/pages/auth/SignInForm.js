@@ -14,33 +14,39 @@ import styles from "../../styles/SignInUpForm.module.css";
 import btnStyles from "../../styles/Button.module.css";
 import appStyles from "../../App.module.css";
 import axios from "axios";
+// import { SetCurrentUserContext } from "../../App";
+import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
 
 function SignInForm() {
+  // const setCurrentUser = useContext(SetCurrentUserContext);
+  const setCurrentUser = useSetCurrentUser();
+
   const [signInData, setSignInData] = useState({
     username: "",
-    password: ""
+    password: "",
   });
 
   const { username, password } = signInData;
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setSignInData({
       ...signInData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-    // from router
+  // from router
   const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('dj-rest-auth/login/', signInData);
-      history.push('/')
-    } catch(err) {
+      const { data } = await axios.post("dj-rest-auth/login/", signInData);
+      setCurrentUser(data.user);
+      history.push("/");
+    } catch (err) {
       setErrors(err.response?.data);
     }
   };
@@ -53,24 +59,24 @@ function SignInForm() {
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="username">
               <Form.Label className="d-none">username</Form.Label>
-              <Form.Control 
-              className={styles.Input}
-              type="text" 
-              placeholder="Enter Username" 
-              name="username"
-              value={username}
-              onChange={handleChange}
+              <Form.Control
+                className={styles.Input}
+                type="text"
+                placeholder="Enter Username"
+                name="username"
+                value={username}
+                onChange={handleChange}
               />
             </Form.Group>
             {errors.username?.map((message, idx) => (
-                <Alert variant="warning" key={idx}>
-                    {message}
-                </Alert>
+              <Alert variant="warning" key={idx}>
+                {message}
+              </Alert>
             ))}
             <Form.Group controlId="password">
               <Form.Label className="d-none">Password</Form.Label>
               <Form.Control
-              className={styles.Input}
+                className={styles.Input}
                 type="password"
                 placeholder="Password"
                 name="password"
@@ -79,9 +85,9 @@ function SignInForm() {
               />
             </Form.Group>
             {errors.password?.map((message, idx) => (
-                <Alert variant="warning" key={idx}>
-                    {message}
-                </Alert>
+              <Alert variant="warning" key={idx}>
+                {message}
+              </Alert>
             ))}
             <Button
               type="submit"
@@ -90,9 +96,9 @@ function SignInForm() {
               Sign In
             </Button>
             {errors.non_field_errors?.map((message, idx) => (
-                <Alert variant="warning" key={idx} className="mt-3">
-                    {message}
-                </Alert>
+              <Alert variant="warning" key={idx} className="mt-3">
+                {message}
+              </Alert>
             ))}
           </Form>
         </Container>
