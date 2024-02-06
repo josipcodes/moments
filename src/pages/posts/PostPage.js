@@ -8,8 +8,12 @@ import appStyles from "../../App.module.css";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 import { axiosReq } from "../../api/axiosDefaults";
 import Post from "./Post";
+import Comment from "../comments/Comment";
 import CommentCreateForm from "../comments/CommentCreateForm";
 import { useCurrentUser } from "../../contexts/CurrentUserContext";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Asset from "../../components/Asset";
+import { fetchMoreData } from "../../utils/utils";
 
 function PostPage() {
   const { id } = useParams();
@@ -30,11 +34,16 @@ function PostPage() {
         // it is called renaming with an object key.
         // Promises.all accepts an array of promises and gets resolved when all promises get resolved, returning an array of data.
         // If any of the promises fail, Promise.all gets rejected w/an error.
-        const [{ data: post }] = await Promise.all([
+        const [{ data: post }, { data: comments }] = await Promise.all([
+          // fetching the post
           axiosReq.get(`/posts/${id}`),
+          // fetching the comments
+          axiosReq.get(`/comments/?post=${id}`),
         ]);
         // using setPost func to update the results array in the state to contain a post
         setPost({ results: [post] });
+        // setting Comments
+        setComments(comments);
         // clg post to check that this is working
         console.log(post);
       } catch (err) {
@@ -64,6 +73,30 @@ function PostPage() {
           ) : comments.results.length ? (
             "Comments"
           ) : null}
+          {comments.results.length ? (
+            <InfiniteScroll children={
+              // if there are comments, they're shown
+            comments.results.map((comment) => (
+              // we're spreading comment object so its contents are passed as props
+              <Comment
+                key={comment.id}
+                {...comment}
+                setPost={setPost}
+                setComments={setComments}
+              />
+            ))}
+              dataLength={comments.results.length}
+              loader={<Asset spinner />}
+              hasMore={!!comments.next}
+              next={() => fetchMoreData(comments, setComments)}
+            />
+          ) : // if there are no comments, we are checking if user is logged in
+          currentUser ? (
+            <span>No comments yet, be the first to comment.</span>
+          ) : (
+            // if the user is not logged in
+            <span>No comments...yet.</span>
+          )}
         </Container>
       </Col>
       <Col lg={4} className="d-none d-lg-block p-0 p-lg-2">
