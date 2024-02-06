@@ -14,6 +14,8 @@ import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { axiosReq } from "../../api/axiosDefaults";
 
 import NoResults from "../../assets/no-results.png";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { fetchMoreData } from "../../utils/utils";
 
 // destructuring message and filter props, with later being an empty string as a default.
 function PostsPage({ message, filter = "" }) {
@@ -43,12 +45,12 @@ function PostsPage({ message, filter = "" }) {
     // we want spinner displayed before we fetch posts.
     setHasLoaded(false);
     const timer = setTimeout(() => {
-        // we want this called any time filter or url changes.
-        fetchPosts();
-    }, 1000)
+      // we want this called any time filter or url changes.
+      fetchPosts();
+    }, 1000);
     return () => {
-        clearTimeout(timer)
-    }
+      clearTimeout(timer);
+    };
     // adding query to dependency array so the new req is made when user changed their text search
   }, [filter, pathname, query]);
 
@@ -78,11 +80,27 @@ function PostsPage({ message, filter = "" }) {
           // nested ternary to display posts or message.
           <>
             {posts.results.length ? (
-              // map over posts and render each one
-              posts.results.map((post) => (
-                // setPosts is needed to like posts.
-                <Post key={post.id} {...post} setPosts={setPosts} />
-              ))
+              <InfiniteScroll
+                // child component will tell our Infinite Scroll component which child components we want it to render.
+                children={
+                  // map over posts and render each one
+                  posts.results.map((post) => (
+                    // setPosts is needed to like posts.
+                    <Post key={post.id} {...post} setPosts={setPosts} />
+                  ))
+                }
+                // props for infinite scroll
+                // how many posts are displayed
+                dataLength={posts.results.length}
+                // loader
+                loader={<Asset spinner />}
+                // is there more data to display
+                // we use double not or double bang operator, returns true for truthy and false for falsy values
+                // next on our page is displayed with a value, when there is no next, it's set to null
+                hasMore={!!posts.next}
+                // if hasMore is true, loads more
+                next={() => fetchMoreData(posts, setPosts)}
+              />
             ) : (
               // show no results asset
               <Container className={appStyles.Content}>

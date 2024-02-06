@@ -8,6 +8,7 @@ import SignInForm from "./pages/auth/SignInForm";
 import PostCreateForm from "./pages/posts/PostCreateForm";
 import PostPage from "./pages/posts/PostPage";
 import PostsPage from "./pages/posts/PostsPage";
+import PostEditForm from "./pages/posts/PostEditForm";
 import { useCurrentUser } from "./contexts/CurrentUserContext";
 
 function App() {
@@ -15,8 +16,8 @@ function App() {
   const currentUser = useCurrentUser();
   // need profile_id to filter the posts by.
   // defaults to an empty string if current user details are still being fetched.
-  const profile_id = currentUser?.profile_id || ""
-  
+  const profile_id = currentUser?.profile_id || "";
+
   return (
     <div className={styles.App}>
       <NavBar />
@@ -35,8 +36,9 @@ function App() {
             path="/feed"
             render={() => (
               // message for when search brings up no results.
-              <PostsPage message="No results found. Adjust your search keyword or follow a user."
-              filter={`owner__followed__owner__profile=${profile_id}&`} 
+              <PostsPage
+                message="No results found. Adjust your search keyword or follow a user."
+                filter={`owner__followed__owner__profile=${profile_id}&`}
               />
             )}
           />
@@ -45,8 +47,9 @@ function App() {
             path="/liked"
             render={() => (
               // message for when search brings up no results.
-              <PostsPage message="No results found. Adjust your search keyword or like a post."
-              filter={`likes__owner__profile=${profile_id}&ordering=-likes__created_at&`}
+              <PostsPage
+                message="No results found. Adjust your search keyword or like a post."
+                filter={`likes__owner__profile=${profile_id}&ordering=-likes__created_at&`}
               />
             )}
           />
@@ -54,6 +57,7 @@ function App() {
           <Route exact path="/signup" render={() => <SignUpForm />} />
           <Route exact path="/posts/create" render={() => <PostCreateForm />} />
           {/* id is a URL parameter for our post */}
+          <Route exact path="/posts/:id/edit" render={() => <PostEditForm />} />
           <Route exact path="/posts/:id" render={() => <PostPage />} />
           <Route render={() => <p>Page not found</p>} />
         </Switch>
