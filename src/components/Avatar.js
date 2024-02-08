@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/Avatar.modules.css";
+import styles from "../styles/Avatar.module.css";
 
 // one version of passing down the props:
 // const Avatar = (props) => {
