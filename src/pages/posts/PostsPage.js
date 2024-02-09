@@ -17,6 +17,8 @@ import NoResults from "../../assets/no-results.png";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { fetchMoreData } from "../../utils/utils";
 import PopularProfiles from "../profiles/PopularProfiles";
+import { useCurrentUser } from "../../contexts/CurrentUserContext";
+
 
 // destructuring message and filter props, with later being an empty string as a default.
 function PostsPage({ message, filter = "" }) {
@@ -28,6 +30,7 @@ function PostsPage({ message, filter = "" }) {
   const { pathname } = useLocation();
   // used for search functionality
   const [query, setQuery] = useState("");
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -53,7 +56,7 @@ function PostsPage({ message, filter = "" }) {
       clearTimeout(timer);
     };
     // adding query to dependency array so the new req is made when user changed their text search
-  }, [filter, pathname, query]);
+  }, [filter, query, pathname, currentUser]);
 
   return (
     <Row className="h-100">
