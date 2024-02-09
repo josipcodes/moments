@@ -17,6 +17,7 @@ import axios from "axios";
 // import { SetCurrentUserContext } from "../../App";
 import { useSetCurrentUser } from "../../contexts/CurrentUserContext";
 import { useRedirect } from "../../hooks/useRedirect";
+import { setTokenTimestamp } from "../../utils/utils";
 
 function SignInForm() {
   // const setCurrentUser = useContext(SetCurrentUserContext);
@@ -47,6 +48,8 @@ function SignInForm() {
     try {
       const { data } = await axios.post("dj-rest-auth/login/", signInData);
       setCurrentUser(data.user);
+      // extracting exp date from the access token, saves it to user's browser in local storage.
+      setTokenTimestamp(data);
       // history.push("/");
       history.goBack();
     } catch (err) {

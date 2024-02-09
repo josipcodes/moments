@@ -1,3 +1,4 @@
+import jwtDecode from "jwt-decode";
 import { axiosReq } from "../api/axiosDefaults";
 
 // can be reused with any  paginated data like comments/profiles by using resource, setResource...
@@ -65,3 +66,21 @@ export const unfollowHelper = (profile, clickedProfile) => {
     // the user owns, so just return it unchanged
     profile;
 }
+
+// function accepts data object returned by API on login.
+// exp is expiry date.
+export const setTokenTimestamp = (data) => {
+  const refreshTokenTimestamp = jwtDecode(data?.refresh_token).exp;
+  localStorage.setItem("refreshTokenTimestamp", refreshTokenTimestamp);
+};
+
+export const shouldRefreshToken = () => {
+  // returns refreshToken timestamp converted by double not operator.
+  // token will only be refreshed for a logged in user.
+  return !!localStorage.getItem("refreshTokenTimestamp");
+};
+
+export const removeTokenTimestamp = () => {
+  // removed time stamp from the localStorage
+  localStorage.removeItem("refreshTokenTimestamp");
+};
