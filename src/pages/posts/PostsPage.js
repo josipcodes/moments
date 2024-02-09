@@ -40,7 +40,7 @@ function PostsPage({ message, filter = "" }) {
         // setting HasLoaded to true so spinner no longer spins.
         setHasLoaded(true);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
     // we want spinner displayed before we fetch posts.

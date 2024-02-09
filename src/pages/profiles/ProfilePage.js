@@ -55,7 +55,7 @@ function ProfilePage() {
         // setHasLoaded was set to true so the spinner is switched off and we can see the layout
         setHasLoaded(true);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
     fetchData();

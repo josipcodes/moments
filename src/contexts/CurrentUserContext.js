@@ -30,7 +30,7 @@ export const CurrentUserProvider = ({ children }) => {
       // Set the current user with the data we get back.
       setCurrentUser(data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 

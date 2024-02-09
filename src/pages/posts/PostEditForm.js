@@ -45,7 +45,7 @@ function PostEditForm() {
         // if user is owner, prepopulate the post, else redirect
         is_owner ? setPostData({ title, content, image }) : history.push("/");
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
     handleMount();

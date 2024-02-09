@@ -46,9 +46,9 @@ function PostPage() {
         // setting Comments
         setComments(comments);
         // clg post to check that this is working
-        console.log(post);
+        // console.log(post);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
     // calling handleMount and running the code every time the id in the url changes.
